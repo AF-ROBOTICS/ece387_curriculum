@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 
-#Col Brian Neff
+#TODO 0 Update the header below with your information
+#Name
 #ROS Enabled mouse client 
 #Activates when mouse wheel is scrolled down and 
 #Deactivates when mouse wheel is scrolled up 
-#last modified 2 Jan 2023
-#mouse_client_OO.py
+#last modified 8 Jan 2023
+#mouse_client.py
 
 import rospy
 import pyautogui
@@ -13,6 +14,8 @@ import sys
 import time
 import os
 from pynput.mouse import Listener
+# TODO 1 Import the lab1 message file you created for the Mouse Controller data
+
 
 #Initialize global variable that will keep track of mouse button status
 global activate
@@ -24,10 +27,18 @@ xDim,yDim = pyautogui.size()
 
 class Mouse:
     def __init__(self):
+        global activate
         listener = Listener(on_move=self.on_move, on_click=self.on_click, on_scroll=self.on_scroll)
         listener.start()
         self.ctrl_c = False
         rospy.on_shutdown(self.shutdownhook)
+
+        # TODO 2 Create class variables to store activation status, and x and y position
+        # Initialize the controller status to False, and in the center of the screen
+
+        # TODO 3 Create a publisher to publish MouseController data on the mouse_info topic
+
+
 
     # Handle the event of the user moving the mouse    
     def on_move(self,x,y):
@@ -40,6 +51,8 @@ class Mouse:
             print(messageString, end='')
             # overwrite same line
             print('\b' *len(messageString), end='', flush=True)
+            xScale = 0.0
+            yScale = 0.0
         else:
             # Use the dimensions of the monitor to convert output into x & y between -1 and 1
             xScale = ((x/(xDim/2))-1)
@@ -51,6 +64,8 @@ class Mouse:
             print(positionStr, end='')
             # overwrite same line
             print('\b' *len(positionStr), end='', flush=True)
+        # TODO 4 Update the appropriate class variables and publish
+
     
     #Currently I'm not doing anything with the button click.
     #Eventually we could add additional modes if we wanted to.
@@ -69,11 +84,17 @@ class Mouse:
             activate = False
         if dy == -1:
             activate = True
+        # TODO 5 Update the appropriate class variables and publish
+
 
     # Handle the event of the user pressing ctrl_c        
     def shutdownhook(self):
+        # TODO 6 Update the appropriate class variables and publish before shutdown
+
+
         print("Shutting down the client                                                      ")
         self.ctrl_c = True
+        
 
 
 
@@ -84,7 +105,5 @@ if __name__ == "__main__":
     print("In order to DEACTIVATE the controller scroll up on the mouse wheel.\n\n") 
     print("To close the program, left-click on the terminal window and type ctrl-c.\n\n")
     rospy.init_node('Mouse')
-    mouseInst = Mouse()
+    Mouse()
     rospy.spin()
-
-
