@@ -9,3 +9,5 @@
 **/*.aux
 **/*.out
 **/*.synctex.gz
+
+.vscode
